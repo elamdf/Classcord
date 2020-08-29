@@ -33,11 +33,24 @@ class classBot():
         except Exception as e:
             pass    
     def gotophysics(self):
-        flag = False
+        self.driver.get("https://classroom.google.com/h")
         element = WebDriverWait(self.driver, 10).until(
         EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/div/div[2]/div/ol/li[1]")))
         physics = self.driver.find_element_by_xpath("/html/body/div[2]/div/div[2]/div/ol/li[5]/div[1]/div[3]/h2/a[1]") 
         physics.click()
+    def gotocsa(self):
+        self.driver.get("https://classroom.google.com/h")
+        element = WebDriverWait(self.driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/div/div[2]/div/ol/li[1]")))
+        csa = self.driver.find_element_by_xpath("/html/body/div[2]/div/div[2]/div/ol/li[4]/div[1]/div[3]/h2/a[1]") 
+        csa.click()   
+    def navigate(self, page):
+        if page == "Stream":
+            stream = self.driver.find_element_by_xpath("/html/body/nav/div[2]/div/div[1]/a")
+            stream.click()
+        elif page == "Classwork":
+            classwork = bot.driver.find_element_by_xpath("/html/body/nav/div[2]/div/div[2]/a")
+            classwork.click()
     def grabstream(self,daysold):
         item = 1
         posts = []
@@ -51,8 +64,38 @@ class classBot():
             except Exception as e:
                 print(e)
                 break
-            if ":" in currentpost:
-                date = currentpostdate = self.driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[2]/main/section/div/div[2]/div[" + str(item) +"]/div[1]/div[1]/div[1]/span/span[1]").text.strip("Created ")
+            if ":" in currentpostdate:
+                date = currentpostdate #= self.driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[2]/main/section/div/div[2]/div[" + str(item) +"]/div[1]/div[1]/div[1]/span/span[1]").text.strip("Created ")
+                value = self.driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[2]/main/section/div/div[2]/div[" + str(item) +"]/div[1]/div[2]/div[1]/html-blob/span[1]").text
+                posts.append([value,date])
+                item += 1
+            else:
+                date = parse(currentpostdate).date()
+                delta = date.today() - date
+                if delta.days <= daysold:
+                    print("appendd")
+                    date = currentpostdate = self.driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[2]/main/section/div/div[2]/div[" + str(item) +"]/div[1]/div[1]/div[1]/span/span[1]").text.strip("Created ")
+                    value = self.driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[2]/main/section/div/div[2]/div[" + str(item) +"]/div[1]/div[2]/div[1]/html-blob/span[1]").text
+                    posts.append([value,date])
+                    item += 1
+                else:
+                    break
+        empty = []
+        return posts if posts == empty else ["no posts in your selected range", "sorry :("]
+        def gethomework(self,duein): 
+            navigate("Classwork")
+        item = 1
+        posts = []      
+        while True:
+            currentpost = ""
+            try: 
+                currentpostdate = self.driver.find_element_by_xpath("/html/body/div[2]/div[3]/main/div/div/div[4]/ol/li[2]/div[2]/div/div/div[3]/ol/li[" + item + "]/div/div/div[3]/div[2]").text.strip("Created ")
+
+            except Exception as e:
+                #print(e)
+                break
+            if ":" in currentpostdate:
+                date = currentpostdate #= self.driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[2]/main/section/div/div[2]/div[" + str(item) +"]/div[1]/div[1]/div[1]/span/span[1]").text.strip("Created ")
                 value = self.driver.find_element_by_xpath("/html/body/div[2]/div[2]/div[2]/main/section/div/div[2]/div[" + str(item) +"]/div[1]/div[2]/div[1]/html-blob/span[1]").text
                 posts.append([value,date])
                 item += 1
@@ -68,11 +111,11 @@ class classBot():
                 else:
                     break
 
-        return posts
-                
-
-# if __name__ == "__main__":        
-#     bot = classBot()
-#     bot.login()
-#     bot.gotophysics()
-#     bot.grabstream(1)
+if __name__ == "__main__":        
+    bot = classBot()
+    bot.login()
+  #  bot.gotophysics()
+  #  bot.grabstream(1)
+# /html/body/div[2]/div[3]/main/div/div/div[4]/ol/li[2]/div[2]/div/div/div[3]/ol/li[1]/div/div/div[3]/div[2]
+# /html/body/div[2]/div[3]/main/div/div/div[4]/ol/li[2]/div[2]/div/div/div[3]/ol/li[2]/div/div/div[3]/div[2]
+# /html/body/div[2]/div[3]/main/div/div/div[4]/ol/li[1]/div[2]/div/div/div[3]/ol/li[1]/div/div[2]/div[1]/div[1]/div[2]/div/html-blob/span
