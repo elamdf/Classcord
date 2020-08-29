@@ -14,11 +14,11 @@ async def printlist(ctx,arg):
     stuff = get_stackoverflow(arg)
     print(stuff)
     for i in stuff:
-        await ctx.send(i[0])
+       # await ctx.send(i[0])
         await ctx.send(i[1])
     return True
 bot = commands.Bot(command_prefix='$')
 @bot.command()
-async def helpme(ctx, arg):
-    await printlist(ctx,arg)
+async def helpme(ctx, *args):
+    await printlist(ctx," ".join(args))
 bot.run(token)
